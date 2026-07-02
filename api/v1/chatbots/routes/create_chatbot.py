@@ -6,13 +6,11 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 
 from core.config import settings
-from db.models.user import User
 from db.models.chatbot.chatbot import Chatbot
 from db.session import get_db
 from models.chatbot.create_chatbot import CreateChatbot, ChatbotCreationResponse
-from utils.auth.password_manager import hash_password
 from core.logging import logging, setup_logging
-from core.security import get_current_user
+from core.security import verify_api_key
 
 setup_logging()
 
@@ -25,15 +23,14 @@ create_chatbot_router = APIRouter(prefix="/create-chatbot")
     status_code=status.HTTP_201_CREATED,
 )
 async def create_chatbot(
-    current_user: Annotated[User, Depends(get_current_user)],
     chatbot: CreateChatbot,
     db: Annotated[Session, Depends(get_db)],
+    api_key: str = Depends(verify_api_key),
 ):
 
     new_chatbot = Chatbot(
         name=chatbot.name,
         description=chatbot.description,
-        user_id=current_user.id,
     )
 
     try:

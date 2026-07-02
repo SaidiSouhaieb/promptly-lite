@@ -11,7 +11,6 @@ from tempfile import NamedTemporaryFile
 from models.file.file_input import FileInput
 from db.models.file.data_source import DataSource
 from db.models.chatbot import Chatbot
-from db.models.user import User
 from db.session import get_db
 from services.file.embedding_pipeline import embedding_pipeline
 from services.file.upload import create_data_source
@@ -22,8 +21,8 @@ from utils.file.remove_file_extensions import get_file_type
 from utils.file.create_temp_file import create_temp_file
 from utils.file.path_utils import get_semantic_folder_path
 from core.constants import STORAGE_PATH, EMBEDDING_MODEL_NAME
-from core.security import get_current_user
 from core.logging import logging
+from core.security import verify_api_key
 
 process_router = APIRouter(prefix="")
 content_extractor = ExtractContent()
@@ -31,10 +30,10 @@ content_extractor = ExtractContent()
 
 @process_router.post("/upload-file/", response_model=UploadResponse)
 async def process_file_upload(
-    current_user: Annotated[User, Depends(get_current_user)],
     file_input: Annotated[FileInput, Body(...)],
     upload_file: Annotated[UploadFile, File(...)],
     db: Annotated[Session, Depends(get_db)],
+    api_key: str = Depends(verify_api_key),
 ):
     chatbot = db.query(Chatbot).filter(Chatbot.id == file_input.chatbot_id).first()
     if not chatbot:

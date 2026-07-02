@@ -11,13 +11,11 @@ from tempfile import NamedTemporaryFile
 from models.file.file_input import FileInput
 from db.models.file.data_source import DataSource
 from db.models.chatbot import Chatbot
-from db.models.user import User
 from db.session import get_db
 from services.file.embedding_pipeline import embedding_pipeline
 from services.file.content_extractor import ExtractContent
 from utils.file.remove_file_extensions import get_file_type
 from core.constants import EMBEDDING_MODEL_NAME, STORAGE_PATH
-from core.security import get_current_user
 from core.logging import logging
 
 

@@ -2,7 +2,7 @@ PROJECT_NAME=promptly
 DOCKERFILE_PATH=./docker/Dockerfile
 BUILD_CONTEXT=..
 DOCKER_COMPOSE_PATH=docker-compose.yml
-DOCKER_COMPOSE= docker-compose  --env-file=.env
+DOCKER_COMPOSE= docker compose 
 
 # Managing containers
 build:
@@ -38,6 +38,11 @@ alembic-downgrade:
 alembic-revision:
 	${DOCKER_COMPOSE} -f ${DOCKER_COMPOSE_PATH} exec promptly alembic revision --autogenerate -m "migration"
 alembic-migrate: alembic-revision alembic-upgrade
+
+wait-for-db:
+	docker compose run --rm promptly /app/scripts/wait-for-it.sh db:5432 -t 30
+
+
 
 # Tests
 test:

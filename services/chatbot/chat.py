@@ -8,7 +8,6 @@ from starlette.concurrency import run_in_threadpool
 from models.chatbot.text_input import TextInput
 from db.models.file.data_source import DataSource
 from db.models.chatbot.chatbot import Chatbot
-from db.models.user.user import User
 
 from services.chatbot.get_chain import get_chain
 from core.constants import EMBEDDING_MODEL_NAME
@@ -29,6 +28,7 @@ def get_chatbot_and_data_source(db: Session, chatbot_id: str):
         .first()
     )
 
+    print("data_source", data_source)
     if not data_source:
         raise ValueError("Data source not found")
 

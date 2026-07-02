@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Promptly API"
     API_V1_STR: str = "/api/v1"
+    API_KEY: str
 
     POSTGRES_USER: str
     POSTGRES_DB: str

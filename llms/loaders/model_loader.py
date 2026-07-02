@@ -30,7 +30,7 @@ class ModelLoader:
             temperature=config.get("temperature", 0.0),
             n_batch=config.get("n_batch", 2048),
             n_gpu_layers=config.get("n_gpu_layers", 30),
-            # callback_manager=self.callback_manager,
+            callback_manager=self.callback_manager,
             verbose=config.get("verbose", True),
             use_mlock=config.get("use_mlock", True),
             f16_kv=config.get("f16_kv", True),

@@ -1,27 +1,19 @@
 import json
 import pytest
-from unittest.mock import patch, AsyncMock
 
-from fastapi.testclient import TestClient
+from unittest.mock import patch, AsyncMock
+from fastapi import HTTPException
+
+from tests.conftest import client
 from main import app
 
 from db.models.chatbot.chatbot import Chatbot
-from api.v1.chatbots.routes.chat import get_current_user
-
-
-@pytest.fixture
-def client():
-    return TestClient(app)
+from core.security import verify_api_key
 
 
 @pytest.fixture
 def headers():
-    return {"Authorization": "Bearer faketoken"}
-
-
-@pytest.fixture
-def override_user():
-    return type("User", (), {"id": 1})()
+    return {"X-API-Key": "test"}
 
 
 @pytest.fixture
@@ -34,10 +26,6 @@ def valid_upload_files():
             "application/json",
         ),
     }
-
-
-def override_get_current_user():
-    return type("User", (), {"id": 1})()
 
 
 def reset_overrides():
@@ -56,11 +44,10 @@ def test_successful_file_upload(
     headers,
     valid_upload_files,
 ):
-    chatbot = Chatbot(user_id=1, name="TestBot", description="Sample bot")
+    chatbot = Chatbot(name="TestBot", description="Sample bot")
     db_session.add(chatbot)
     db_session.commit()
 
-    app.dependency_overrides[get_current_user] = override_get_current_user
     mock_temp_file.return_value = "/tmp/test_file"
     mock_extractor.get_text_content.return_value = "extracted text"
 
@@ -75,8 +62,6 @@ def test_successful_file_upload(
         "file_name": "test_document",
     }
 
-    reset_overrides()
-
 
 def test_file_upload_without_authentication(client):
     files = {
@@ -89,15 +74,30 @@ def test_file_upload_without_authentication(client):
     }
 
     response = client.post("/process/upload-file/", files=files)
+    assert response.status_code == 403
+
+
+@patch("core.security.verify_api_key")
+def test_file_upload_with_invalid_api_key(
+    mock_verify_api_key, client, valid_upload_files
+):
+    mock_verify_api_key.side_effect = HTTPException(
+        status_code=401, detail="Invalid API key"
+    )
+
+    headers = {"X-API-Key": "invalid_key"}
+    response = client.post(
+        "/process/upload-file/", files=valid_upload_files, headers=headers
+    )
+
     assert response.status_code == 401
+    assert "Invalid API key" in response.json()["detail"]
 
 
 @patch("api.v1.process.routes.upload.upload_file.create_temp_file")
 def test_file_upload_with_nonexistent_chatbot(
     mock_temp_file, db_session, client, headers
 ):
-    app.dependency_overrides[get_current_user] = override_get_current_user
-
     files = {
         "upload_file": ("test.pdf", b"test content", "application/pdf"),
         "file_input": (
@@ -111,5 +111,3 @@ def test_file_upload_with_nonexistent_chatbot(
 
     assert response.status_code == 404
     assert "Chatbot not found" in response.json()["detail"]
-
-    reset_overrides()

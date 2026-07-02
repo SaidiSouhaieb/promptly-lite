@@ -14,8 +14,7 @@ model_configs = {
         "stop": ["<|eot_id|>", "<|end_of_text|>"],
     },
     "mistral7b": {
-        "model_path": "llms/gguf/models/mistral7b/mistral7b.gguf",
-        # "model_path": "llms/gguf/models/small_mistral.gguf",
+        "model_path": "llms/gguf/models/mistral7b/mistral.gguf",
         "temperature": 0.01,  # Reduced from 0.1 for more determinism
         "n_batch": 2048,
         "n_gpu_layers": 20,

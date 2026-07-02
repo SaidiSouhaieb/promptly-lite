@@ -8,8 +8,7 @@ EMAIL_REGEX = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 # Storage
 STORAGE_PATH = "storage"
 TEMP_PATH = "temp"
-VECTORSTORE_NAME = "text_data"
-VECTORSTORE_TYPE = "semantic"
+
 
 # Embedding
 EMBEDDING_MODEL_NAME = "Sahajtomar/french_semantic"

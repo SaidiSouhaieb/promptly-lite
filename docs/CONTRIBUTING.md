@@ -8,8 +8,8 @@ Thank you for considering contributing to this open-source project! We welcome c
 1. **Fork** the repository
 2. **Clone** your fork:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/REPO_NAME.git
-   cd REPO_NAME
+   git clone https://github.com/SaidiSouhaieb/promptly-lite.git
+   cd promptly-lite
    ```
 3. **Create a new branch** for your feature or fix:
    ```bash

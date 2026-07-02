@@ -16,8 +16,8 @@ def embedding_pipeline(
         raw_text=raw_text,
         embedding_model_name=embedding_model,
         chunk_size=chunk_size,
-        db_path=vector_store_path,
+        collection_name=vector_store_path,
         same_vectorstore=same_vectorstore,
-    ).persist()
+    )
 
     logging.info(f"Processing complete. Vector store saved to '{vector_store_path}'.")

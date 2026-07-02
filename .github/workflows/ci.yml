@@ -1,0 +1,57 @@
+name: Promptly CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      API_KEY: ${{ secrets.API_KEY }}
+      POSTGRES_DB: promptly_db
+      POSTGRES_PORT: 5432
+      BACKEND_PORT: 8230
+      POSTGRES_HOST: db
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create .env file for Docker Compose
+        run: |
+          echo "POSTGRES_USER=${POSTGRES_USER}" > .env
+          echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" >> .env
+          echo "POSTGRES_DB=${POSTGRES_DB}" >> .env
+          echo "POSTGRES_PORT=${POSTGRES_PORT}" >> .env
+          echo "POSTGRES_HOST=${POSTGRES_HOST}" >> .env
+          echo "JWT_SECRET_KEY=${JWT_SECRET}" >>.env
+          echo "POSTGRES_URL=${POSTGRES_URL}" >>.env
+          echo "BACKEND_PORT=${BACKEND_PORT}" >> .env
+          echo "API_KEY=${API_KEY}" >>.env
+
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and start containers
+        run: make start
+
+      - name: Wait for DB
+        run: make wait-for-db
+
+      - name: Run Alembic migrations
+        run: make alembic-upgrade
+
+
+      - name: Run tests inside container
+        run: make test
+
+      - name: Shut down containers
+        if: always()
+        run: make down

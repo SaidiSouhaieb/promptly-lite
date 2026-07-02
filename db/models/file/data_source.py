@@ -30,5 +30,3 @@ class DataSource(BaseModel):
     type = Column(Enum(DataSourceTypeEnum), nullable=False)
     file_path = Column(String, nullable=False)
     status = Column(Enum(DataSourceStatusEnum))
-    # processed_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
-    # created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))

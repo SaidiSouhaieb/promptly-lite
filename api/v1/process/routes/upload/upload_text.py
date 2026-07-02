@@ -17,7 +17,6 @@ from pydantic import BaseModel
 
 from db.models.file.data_source import DataSource
 from db.models.chatbot import Chatbot
-from db.models.user import User
 from models.file.text_input import ProcessInput
 from db.session import get_db
 from services.file.embedding_pipeline import embedding_pipeline
@@ -26,9 +25,9 @@ from services.file.content_extractor import ExtractContent
 from models.file.qa_input import QARequest
 from models.file.upload_response import UploadTextResponse
 from core.constants import STORAGE_PATH, EMBEDDING_MODEL_NAME
-from core.security import get_current_user
 from core.logging import logging
 from utils.file.path_utils import get_semantic_folder_path
+from core.security import verify_api_key
 
 process_router = APIRouter(prefix="")
 content_extractor = ExtractContent()
@@ -36,9 +35,9 @@ content_extractor = ExtractContent()
 
 @process_router.post("/text", response_model=UploadTextResponse)
 async def process_text_input(
-    current_user: Annotated[User, Depends(get_current_user)],
     input: ProcessInput,
     db: Session = Depends(get_db),
+    api_key: str = Depends(verify_api_key),
 ):
     chatbot = db.query(Chatbot).filter(Chatbot.id == input.chatbot_id).first()
     if not chatbot:

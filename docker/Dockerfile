@@ -23,4 +23,7 @@ COPY . .
 
 EXPOSE 8230
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8230", "--reload"]
+COPY ./scripts/entrypoint.sh /scripts/entrypoint.sh
+RUN chmod +x /scripts/entrypoint.sh
+
+ENTRYPOINT ["/scripts/entrypoint.sh"]

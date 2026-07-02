@@ -10,7 +10,6 @@ from sqlalchemy import inspect, text
 
 from api.v1.chatbots.router import router as chatbot_router
 from api.v1.process.router import router as process_router
-from api.v1.auth.router import router as auth_router
 from db.session import get_db, engine
 from core.logging import setup_logging
 
@@ -32,7 +31,6 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(chatbot_router)
 app.include_router(process_router)
-app.include_router(auth_router)
 
 
 @app.get("/test-db-connection")
@@ -44,10 +42,11 @@ async def test_db_connection(db: Session = Depends(get_db)):
 
 @app.get("/")
 async def root():
-    return {"message": "API is working", "admin_panel": "/admin"}
+    return {"message": "API is working!!", "admin_panel": "/admin"}
 
 
 if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run("main:app", host="0.0.0.0", port=8230, reload=True)
+#
