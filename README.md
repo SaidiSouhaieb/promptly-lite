@@ -85,6 +85,6 @@ For inquiries or support, please reach out via [saidisouhaiebai@gmail.com](mailt
 
 ## 🔗 Links
 
-- 🌐 **[Promptly Website](https://promtly.tech)**
+- 🌐 **[Promptly Website](https://buildpromplty.dev)**
 - 🐙 **[GitHub](https://github.com/SaidiSouhaieb)**
 - 💼 **[Personal LinkedIn](https://www.linkedin.com/in/saidi-souhaieb-4632702a8/)**
